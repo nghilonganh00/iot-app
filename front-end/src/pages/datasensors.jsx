@@ -90,6 +90,10 @@ const DataSensors = () => {
             defaultValue={10}
           />
           <div>Entries</div>
+
+          <div className="bg-[#635bff] text-white font-semibold rounded-md hover:cursor-pointer px-2.5 shadow py-1.5">
+            Go
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
