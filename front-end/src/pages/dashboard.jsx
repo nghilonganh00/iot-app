@@ -31,7 +31,7 @@ const Dashboard = () => {
   const [datasensors, setDataSensors] = useState({
     temperature: 36,
     light: 800,
-    humidity: 20,
+    humidity: 80,
   });
 
   const data = {
@@ -115,13 +115,13 @@ const Dashboard = () => {
 
   const getBackgroundColor = (value, type) => {
     if (type === "temperature") {
-      return interpolateColor(value, 0, 50, "#FFB6B6", "#FF6F6F"); // From light red to dark red
+      return interpolateColor(value, 0, 50, "#FFB6B6", "#FF6F6F"); 
     } else if (type === "light") {
-      return interpolateColor(value, 0, 1000, "#d3d3d3", "#f8c20a"); // From light gray to yellow
+      return interpolateColor(value, 0, 1000, "#d3d3d3", "#f8c20a"); 
     } else if (type === "humidity") {
-      return interpolateColor(value, 0, 100, "#a2c2eb", "#36A2EB"); // From light blue to dark blue
+      return interpolateColor(value, 0, 100, "#a2c2eb", "#36A2EB");
     }
-    return "#e0e0e0"; // Default color
+    return "#e0e0e0"; 
   };
 
   return (
@@ -204,7 +204,7 @@ const Dashboard = () => {
       <div className="flex items-start gap-5 mt-4">
         <div className="flex-1 bg-white h-[480px] rounded-xl shadow-sm p-3">
           <div className="flex items-center justify-between">
-            <div className="mb-4 font-semibold text-lg text-gray-800">
+            <div className="mb-2 font-semibold text-lg text-gray-800">
               Environment Data
             </div>
           </div>

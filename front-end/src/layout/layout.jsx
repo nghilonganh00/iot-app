@@ -17,7 +17,7 @@ const TABS = [
 ];
 
 const Layout = () => {
-  const [isExpandMenu, setExpandMenu] = useState(false);
+  const [isExpandMenu, setExpandMenu] = useState(true);
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
   const profileMenuRef = useRef(null);
@@ -25,7 +25,6 @@ const Layout = () => {
 
   useEffect(() => {
     const savedCurrentUserIndex = localStorage.getItem("currentUserIndex");
-
 
     if (savedCurrentUserIndex) {
       setCurrentUserIndex(parseInt(savedCurrentUserIndex, 10));
@@ -114,15 +113,6 @@ const Layout = () => {
                 >
                   My profile
                 </NavLink>
-
-                <a
-                  href="https://github.com/nghilonganh00/iot-app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                >
-                  GitHub Repository
-                </a>
               </div>
             </div>
           )}

@@ -1,6 +1,4 @@
 import { Filter, Search } from "lucide-react";
-import FilterTimeDropdown from "../components/filterDropdown";
-import { useState } from "react";
 import Pagination from "../components/pagination";
 import FilterDropdown from "../components/filterDropdown";
 
