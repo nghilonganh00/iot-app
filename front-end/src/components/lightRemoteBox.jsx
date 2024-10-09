@@ -1,32 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import OffLight from "../assets/off-light.png";
 import OnLight from "../assets/on-light.png";
+import UserActionAPI from "../API/useactionAPI";
 
-const LightRemoteBox = () => {
+const LightRemoteBox = ({ deviceStatus }) => {
   const [isOnLight, setOnLigh] = useState(false);
   const [isLoading, setLoading] = useState();
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     setLoading(true);
-    setTimeout(() => {
+
+    const status = isOnLight ? "OFF" : "ON";
+
+    try {
+      const response = await UserActionAPI.toggle({
+        device: "light",
+        status: status,
+      });
+
+      if (response.ok) {
+        setOnLigh(!isOnLight);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
       setLoading(false);
-      setOnLigh(!isOnLight);
-    }, 3000);
+    }
   };
+
+  useEffect(() => {
+    setOnLigh(() => deviceStatus["light"] === "ON");
+  }, [deviceStatus]);
 
   return (
     <div className="relative flex items-center h-24 bg-white rounded-lg shadow-sm gap-1">
       {isLoading && (
         <div className="z-50 absolute top-0 size-full bg-black/40 flex items-center justify-center">
           <svg
-            class="animate-spin size-10"
+            className="animate-spin size-10"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
           >
             <circle
-              class="opacity-25"
+              className="opacity-25"
               cx="12"
               cy="12"
               r="10"
@@ -34,7 +52,7 @@ const LightRemoteBox = () => {
               stroke-width="4"
             ></circle>
             <path
-              class="opacity-75"
+              className="opacity-75"
               fill="currentColor"
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>

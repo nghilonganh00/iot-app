@@ -1,13 +1,12 @@
 import { Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-const FilterDropdown = ({options}) => {
+const FilterDropdown = ({ options, value, setValue }) => {
   console.log("options: ", options);
-  const [selectedOption, setSelectOption] = useState(options[0]);
   const [isOpen, setOpen] = useState(false);
 
   const handleSelect = (option) => {
-    setSelectOption(option);
+    setValue(option);
     setOpen(false);
   };
 
@@ -18,7 +17,7 @@ const FilterDropdown = ({options}) => {
         className="flex items-center justify-between gap-4 border border-slate-300 rounded-md py-1.5 px-2 hover:cursor-pointer hover:border-slate-800"
       >
         <div className="text-gray-800 font-medium text-sm min-w-16">
-          {selectedOption.label}
+          {value.label}
         </div>
         <ChevronDown strokeWidth={1.5} className="size-5" />
       </div>
@@ -34,7 +33,7 @@ const FilterDropdown = ({options}) => {
               <div className="text-sm text-gray-800 min-w-24">
                 {option.label}
               </div>
-              {selectedOption.label === option.label && (
+              {value.label === option.label && (
                 <Check strokeWidth={1.5} className="text-[#635bff]" />
               )}
             </div>

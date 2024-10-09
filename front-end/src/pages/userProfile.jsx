@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import DocIcon from "../assets/doc_icon.png";
+import PdfIcon from "../assets/pdf_icon.png";
+import Github from "../assets/github_icon.png";
+import { Link } from "react-router-dom";
 
 const PROFILES = [
   {
@@ -70,6 +74,17 @@ const UserProfile = () => {
                   {profile.name}
                 </h2>
                 <p className="text-sm text-gray-500">{profile.email}</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <a
+                    href="https://github.com/nghilonganh00/iot-app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img src={Github} alt="Github" className="size-8" />
+                  </a>
+                  <img src={DocIcon} alt="Doc API" className="size-8" />
+                  <img src={PdfIcon} alt="PDF" className="size-8" />
+                </div>
               </div>
             </div>
 
