@@ -3,8 +3,15 @@ import DatasensorService from "../services/datasensor.service";
 const DatasensorController = {
   handleGetAll: async (req, res) => {
     try {
-      const { limit, page, sortBy, sortDirection, searchKey, searchType } =
-        req.query;
+      const {
+        limit,
+        page,
+        sortBy,
+        sortDirection,
+        searchKey,
+        searchType,
+        createdAt,
+      } = req.query;
 
       const datasensor = await DatasensorService.getAll({
         limit,
@@ -13,6 +20,7 @@ const DatasensorController = {
         sortDirection,
         searchKey,
         searchType,
+        createdAt,
       });
 
       return res.status(200).json({

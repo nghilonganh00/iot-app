@@ -1,16 +1,18 @@
 const UserActionAPI = {
   toggle: async ({ device, status }) => {
     try {
-      const response = await fetch("http://localhost:8080/user-action/toggle", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          device: device,
-          status: status,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/devices/${device}/power`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: status,
+          }),
+        }
+      );
 
       return response;
     } catch (error) {
@@ -20,15 +22,12 @@ const UserActionAPI = {
   },
   getStatus: async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/user-action/device-status",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch("http://localhost:8080/api/devices/states", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       return response;
     } catch (error) {
@@ -43,6 +42,7 @@ const UserActionAPI = {
     sortDirection,
     searchKey,
     searchType,
+    createdAt,
   }) => {
     try {
       const params = new URLSearchParams({
@@ -52,6 +52,10 @@ const UserActionAPI = {
         sortDirection,
       });
 
+      if (createdAt) {
+        params.append("createdAt", createdAt);
+      }
+
       if (searchType !== "all") {
         params.append("searchType", searchType);
       }
@@ -60,7 +64,7 @@ const UserActionAPI = {
       }
 
       const response = await fetch(
-        `http://localhost:8080/user-action/history-action?${params.toString()}`,
+        `http://localhost:8080/api/devices?${params.toString()}`,
         {
           method: "GET",
           headers: {

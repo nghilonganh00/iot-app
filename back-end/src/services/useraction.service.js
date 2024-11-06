@@ -22,28 +22,52 @@ const UserActionService = {
     sortDirection = "DESC",
     searchKey,
     searchType,
+    createdAt = null,
   }) => {
     try {
       const offset = (page - 1) * limit;
 
-      const whereClause = {};
-      let userActions;
-
-      searchType && (whereClause["device"] = { [Op.eq]: searchType });
-      searchKey && (whereClause["status"] = { [Op.eq]: searchKey });
-
-      userActions = await db.UserAction.findAndCountAll({
-        where: whereClause,
+      let whereClause = "1=1";
+      const params = {
         limit: parseInt(limit, 10),
         offset: parseInt(offset, 10),
-        order: [[sortBy, sortDirection.toUpperCase()]],
+      };
+
+      if (searchType) {
+        whereClause += " AND device = :searchType";
+        params.searchType = searchType;
+      }
+
+      if (searchKey) {
+        whereClause += " AND status = :searchKey";
+        params.searchKey = searchKey;
+      }
+
+      if (createdAt) {
+        whereClause += " AND createdAt = :createdAt";
+        params.createdAt = createdAt;
+      }
+
+      const query = `
+        SELECT *, COUNT(*) OVER() AS total_count
+        FROM Useractions
+        WHERE ${whereClause}
+        ORDER BY ${sortBy} ${sortDirection.toUpperCase()}
+        LIMIT :limit OFFSET :offset
+      `;
+
+      const useractions = await db.sequelize.query(query, {
+        replacements: params,
+        type: db.Sequelize.QueryTypes.SELECT,
       });
 
+      const totalRecords = useractions.length ? useractions[0].total_count : 0;
+
       return {
-        actionHistory: userActions.rows,
+        actionHistory: useractions,
         currentPage: page,
-        totalPages: Math.ceil(userActions.count / limit),
-        totalRecords: userActions.count,
+        totalPages: Math.ceil(totalRecords / limit),
+        totalRecords: totalRecords,
       };
     } catch (error) {
       throw Error(`Fetching action history failed: ${error}`);

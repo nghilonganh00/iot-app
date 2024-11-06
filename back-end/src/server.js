@@ -43,15 +43,21 @@ client.on("message", async (topic, message) => {
     const datasensor = JSON.parse(message);
 
     // Emit the received message to all connected Socket.IO clients
+    console.log("message: ", datasensor);
     const newDatasensor = await DatasensorService.create({
       temperature: datasensor.temperature,
       humidity: datasensor.humidity,
       light: datasensor.light,
+      // wind: datasensor.wind,
     });
 
     io.emit("data", {
       message: message.toString(),
       timestamp: newDatasensor.createdAt,
+    });
+  } else if (topic === "devices/wind/warning") {
+    io.emit("warning", {
+      message: message.toString(),
     });
   }
 });

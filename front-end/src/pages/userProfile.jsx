@@ -82,8 +82,20 @@ const UserProfile = () => {
                   >
                     <img src={Github} alt="Github" className="size-8" />
                   </a>
-                  <img src={DocIcon} alt="Doc API" className="size-8" />
-                  <img src={PdfIcon} alt="PDF" className="size-8" />
+                  <a
+                    href="https://www.postman.com/aviation-geoscientist-84963303/iot/request/lfex4c8/get-device-status"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img src={DocIcon} alt="Doc API" className="size-8" />
+                  </a>
+                  <a
+                    href="https://docs.google.com/document/d/1LM_5t8jbBde8_1Z3e7Z207Di9Lfua0qbVPOa8QoasU8/edit?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img src={PdfIcon} alt="PDF" className="size-8" />
+                  </a>
                 </div>
               </div>
             </div>

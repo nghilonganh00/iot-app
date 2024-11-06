@@ -4,6 +4,7 @@ import Pagination from "../components/pagination";
 import FilterDropdown from "../components/filterDropdown";
 import DatasensorAPI from "../API/datasensorAPI";
 import formatDate from "../utils/datetime";
+import convertDateFormat from "../utils/converDate";
 
 const options = [
   { label: "All", value: "all" },
@@ -12,10 +13,17 @@ const options = [
   { label: "Humidity", value: "humidity" },
 ];
 
+const showedEntryTotal = [
+  { label: "10", value: 10 },
+  { label: "20", value: 20 },
+  { label: "30", value: 30 },
+  { label: "50", value: 50 },
+];
+
 const DataSensors = () => {
   const [datasensor, setDatasensor] = useState([]);
 
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(showedEntryTotal[0]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -23,15 +31,17 @@ const DataSensors = () => {
   const [searchType, setSearchType] = useState(options[0]);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("DESC");
+  const [createdAt, setCreatedAt] = useState();
 
   const fetchDatasensorData = async () => {
     const response = await DatasensorAPI.getAll({
-      limit,
+      limit: limit.value,
       page: currentPage,
       sortBy: sortBy,
       sortDirection: sortDirection,
       searchKey,
       searchType: searchType.value,
+      createdAt: convertDateFormat(createdAt),
     });
 
     if (!response.ok) return;
@@ -56,7 +66,7 @@ const DataSensors = () => {
 
   useEffect(() => {
     fetchDatasensorData();
-  }, [currentPage, sortBy, sortDirection]);
+  }, [currentPage, sortBy, sortDirection, limit]);
 
   return (
     <div className="px-6 py-4">
@@ -67,19 +77,43 @@ const DataSensors = () => {
       <div className="w-full bg-white h-14 rounded-md shadow-sm flex items-center justify-between px-4 gap-2">
         <div className="flex items-center gap-2 text-sm font-medium">
           <div>Show</div>
-          <input
-            type="text"
-            className=" w-[60px] font-semibold rounded-md border border-gray-600 px-2 py-1.5 text-sm"
+
+          <FilterDropdown
+            options={showedEntryTotal}
             value={limit}
-            onChange={(e) => setLimit(e.target.value)}
+            setValue={setLimit}
           />
+
           <div>Entries</div>
 
-          <div
+          {/* <div
             onClick={fetchDatasensorData}
             className="bg-[#635bff] text-white font-semibold rounded-md hover:cursor-pointer px-2.5 shadow py-1.5"
           >
             Go
+          </div> */}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-gray-800 ">Time: </div>
+          <div className="relative w-[300px]">
+            <input
+              type="text"
+              className="w-full rounded-md border px-2 py-1.5 border-slate-300 text-sm"
+              value={createdAt}
+              onChange={(e) => setCreatedAt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchDatasensorData();
+                }
+              }}
+              placeholder={"Tìm kiếm theo thời gian"}
+            />
+            <Search
+              className="absolute right-2 top-2 size-4 text-slate-600 hover:cursor-pointer"
+              strokeWidth={1.5}
+              onClick={fetchDatasensorData}
+            />
           </div>
         </div>
 

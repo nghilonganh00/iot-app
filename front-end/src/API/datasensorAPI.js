@@ -6,6 +6,7 @@ const DatasensorAPI = {
     sortDirection,
     searchKey,
     searchType,
+    createdAt,
   }) => {
     try {
       const params = new URLSearchParams({
@@ -20,8 +21,12 @@ const DatasensorAPI = {
         params.append("searchKey", searchKey);
       }
 
+      if (createdAt) {
+        params.append("createdAt", createdAt);
+      }
+
       const response = await fetch(
-        `http://localhost:8080/datasensor?${params.toString()}`,
+        `http://localhost:8080/api/datasensor?${params.toString()}`,
         {
           method: "GET",
           headers: {

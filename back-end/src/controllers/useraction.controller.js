@@ -4,7 +4,9 @@ import UserActionService from "../services/useraction.service";
 const UserActionController = {
   toggle: async (req, res) => {
     try {
-      const { device, status } = req.body;
+      const { device } = req.params;
+      const { status } = req.body;
+
       const ledTopic = `devices/${device}/toggle`;
       const confirmationTopic = `devices/${device}/confirmation`;
       let responseSent = false;
@@ -48,7 +50,7 @@ const UserActionController = {
   getStatus: async (req, res) => {
     try {
       const topic = `devices/status`;
-      const responseTopic = "devices/status/response";
+      const confirmationTopic = `devices/status/response`;
       let responseSent = false;
 
       const sendResponse = (statusCode, message, data = {}) => {
@@ -58,8 +60,17 @@ const UserActionController = {
         }
       };
 
+      const confirmationHandler = async (topic, message) => {
+        if (topic === confirmationTopic) {
+          clearTimeout(timeout);
+
+          sendResponse(200, ``, message.toString());
+        }
+      };
+
       const timeout = setTimeout(() => {
         sendResponse(500, "Timeout waiting for confirmation");
+        client.removeListener("message", confirmationHandler);
       }, 10000);
 
       client.publish(topic, "", (err) => {
@@ -67,16 +78,7 @@ const UserActionController = {
         console.log("Message sent successfully");
       });
 
-      client.once("message", (topic, message) => {
-        if (topic === responseTopic) {
-          clearTimeout(timeout);
-          sendResponse(
-            200,
-            "Get status of all devices successfully",
-            message.toString()
-          );
-        }
-      });
+      client.on("message", confirmationHandler);
     } catch (error) {
       console.error("Getting status failed:", error);
       res.status(500).json({
@@ -88,8 +90,15 @@ const UserActionController = {
 
   handleGetAll: async (req, res) => {
     try {
-      const { limit, page, sortBy, sortDirection, searchKey, searchType } =
-        req.query;
+      const {
+        limit,
+        page,
+        sortBy,
+        sortDirection,
+        searchKey,
+        searchType,
+        createdAt,
+      } = req.query;
 
       const actionHistory = await UserActionService.getAll({
         limit,
@@ -98,6 +107,7 @@ const UserActionController = {
         sortDirection,
         searchKey,
         searchType,
+        createdAt,
       });
 
       return res.status(200).json({

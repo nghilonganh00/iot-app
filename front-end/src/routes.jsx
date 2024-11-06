@@ -5,6 +5,7 @@ import Dashboard from "./pages/dashboard";
 import DataSensors from "./pages/datasensors";
 import ActionHistory from "./pages/actionHistory";
 import UserProfile from "./pages/userProfile";
+import Dashboard2 from "./pages/dashboard2";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { path: "/data-sensors", element: <DataSensors /> },
       { path: "/action-history", element: <ActionHistory /> },
       { path: "/user-profile", element: <UserProfile /> },
+      // { path: "/dashboard2", element: <Dashboard2 /> },
     ],
   },
 ]);

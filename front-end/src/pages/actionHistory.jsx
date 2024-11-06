@@ -4,12 +4,14 @@ import FilterDropdown from "../components/filterDropdown";
 import { useEffect, useState } from "react";
 import UserActionAPI from "../API/useactionAPI";
 import formatDate from "../utils/datetime";
+import convertDateFormat from "../utils/converDate";
 
 const deviceOptions = [
   { label: "All", value: "all" },
   { label: "Fan", value: "fan" },
   { label: "Light", value: "light" },
   { label: "Air Conditioner", value: "air-conditioner" },
+  { label: "Wind", value: "wind" },
 ];
 
 const statusOptions = [
@@ -18,26 +20,35 @@ const statusOptions = [
   { label: "Turn Off", value: 0 },
 ];
 
+const limitOptions = [
+  { label: "10", value: 10 },
+  { label: "20", value: 20 },
+  { label: "30", value: 30 },
+  { label: "50", value: 50 },
+];
+
 const ActionHistory = () => {
   const [actionHistory, setActionHistory] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(limitOptions[0]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchKey, setSearchKey] = useState(statusOptions[0]);
   const [searchType, setSearchType] = useState(deviceOptions[0]);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("DESC");
+  const [createdAt, setCreatedAt] = useState();
 
   const fetchActionHistoryData = async () => {
     const response = await UserActionAPI.getAll({
-      limit: parseInt(limit),
+      limit: limit.value,
       page: currentPage,
       sortBy: sortBy,
       sortDirection: sortDirection,
       searchKey: searchKey.value,
       searchType: searchType.value,
+      createdAt: convertDateFormat(createdAt),
     });
 
     if (!response.ok) return;
@@ -62,7 +73,7 @@ const ActionHistory = () => {
 
   useEffect(() => {
     fetchActionHistoryData();
-  }, [currentPage]);
+  }, [currentPage, searchKey, searchType, limit, searchKey, searchType]);
   return (
     <div className="px-6 py-4">
       <div className="mb-4 text-2xl font-medium text-gray-800">
@@ -72,18 +83,42 @@ const ActionHistory = () => {
       <div className="w-full bg-white h-14 rounded-md shadow-sm flex items-center justify-between px-4 gap-2">
         <div className="flex items-center gap-2 text-sm font-medium">
           <div>Show</div>
-          <input
-            type="text"
-            className=" w-[60px] font-semibold rounded-md border border-gray-600 px-2 py-1.5 text-sm"
+
+          <FilterDropdown
+            options={limitOptions}
             value={limit}
-            onChange={(e) => setLimit(e.target.value)}
+            setValue={setLimit}
           />
+
           <div>Entries</div>
-          <div
+          {/* <div
             className="bg-[#635bff] text-white font-semibold rounded-md hover:cursor-pointer px-2.5 shadow py-1.5"
             onClick={fetchActionHistoryData}
           >
             Go
+          </div> */}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-gray-800 ">Time: </div>
+          <div className="relative w-[300px]">
+            <input
+              type="text"
+              className="w-full rounded-md border px-2 py-1.5 border-slate-300 text-sm"
+              value={createdAt}
+              onChange={(e) => setCreatedAt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchActionHistoryData();
+                }
+              }}
+              placeholder={"Tìm kiếm theo thời gian"}
+            />
+            <Search
+              className="absolute right-2 top-2 size-4 text-slate-600 hover:cursor-pointer"
+              strokeWidth={1.5}
+              onClick={fetchActionHistoryData}
+            />
           </div>
         </div>
 

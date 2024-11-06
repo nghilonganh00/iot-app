@@ -14,6 +14,7 @@ const TABS = [
   { icon: Home, link: "/dashboard", label: "Dashboard" },
   { icon: Activity, link: "/data-sensors", label: "Data Sensors" },
   { icon: NotebookText, link: "/action-history", label: "Action History" },
+  // { icon: Home, link: "/dashboard2", label: "Dashboard" },
 ];
 
 const Layout = () => {

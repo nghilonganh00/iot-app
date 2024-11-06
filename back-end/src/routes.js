@@ -5,11 +5,12 @@ import DatasensorController from "./controllers/datasensor.controller";
 let router = express.Router();
 
 let initWebRoutes = (app) => {
-  app.post("/user-action/toggle", UserActionController.toggle);
-  app.get("/user-action/device-status", UserActionController.getStatus);
-  app.get("/user-action/history-action", UserActionController.handleGetAll);
+  app.get("/api/devices/states", UserActionController.getStatus);
+  app.post("/api/devices/:device/power", UserActionController.toggle);
+  app.get("/api/devices", UserActionController.handleGetAll);
 
-  app.get("/datasensor", DatasensorController.handleGetAll);
+  app.get("/api/datasensor", DatasensorController.handleGetAll);
+
   return app.use("/", router);
 };
 

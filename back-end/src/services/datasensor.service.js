@@ -8,6 +8,7 @@ const DatasensorService = {
         temperature,
         humidity,
         light,
+        // wind,
       });
 
       return newDatasensor;
@@ -23,35 +24,48 @@ const DatasensorService = {
     sortDirection = "DESC",
     searchKey = "",
     searchType = "",
+    createdAt = null,
   }) => {
     try {
       const offset = (page - 1) * limit;
 
-      const whereClause = {};
-      let datasensors;
+      let whereClause = "1=1";
+      const params = {
+        limit: parseInt(limit, 10),
+        offset: parseInt(offset, 10),
+      };
 
-      if (searchKey && searchType) {
-        console.log("searkey isnt null: ", searchKey, searchType);
-        whereClause[searchType] = { [Op.eq]: searchKey };
-        datasensors = await db.Datasensor.findAndCountAll({
-          where: whereClause,
-          limit: parseInt(limit, 10),
-          offset: parseInt(offset, 10),
-          order: [[sortBy, sortDirection.toUpperCase()]],
-        });
-      } else {
-        datasensors = await db.Datasensor.findAndCountAll({
-          limit: parseInt(limit, 10),
-          offset: parseInt(offset, 10),
-          order: [[sortBy, sortDirection.toUpperCase()]],
-        });
+      if (createdAt) {
+        whereClause += " AND createdAt = :createdAt";
+        params.createdAt = createdAt;
       }
 
+      if (searchKey && searchType) {
+        whereClause += ` AND ${searchType} = :searchKey`;
+        params.searchKey = searchKey;
+        params.searchType = searchType;
+      }
+
+      const query = `
+        SELECT *, COUNT(*) OVER() AS total_count
+        FROM Datasensors
+        WHERE ${whereClause}
+        ORDER BY ${sortBy} ${sortDirection.toUpperCase()}
+        LIMIT :limit OFFSET :offset;
+      `;
+
+      const datasensors = await db.sequelize.query(query, {
+        replacements: params,
+        type: db.Sequelize.QueryTypes.SELECT,
+      });
+
+      const totalRecords = datasensors.length ? datasensors[0].total_count : 0;
+
       return {
-        datasensor: datasensors.rows,
+        datasensor: datasensors,
         currentPage: page,
-        totalPages: Math.ceil(datasensors.count / limit),
-        totalRecords: datasensors.count,
+        totalPages: Math.ceil(totalRecords / limit),
+        totalRecords: totalRecords,
       };
     } catch (error) {
       throw Error(`Fetching datasensors failed: ${error}`);

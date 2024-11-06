@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Datasensor extends Model {
     /**
@@ -13,13 +11,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Datasensor.init({
-    temperature: DataTypes.FLOAT,
-    humidity: DataTypes.INTEGER,
-    light: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'Datasensor',
-  });
+  Datasensor.init(
+    {
+      temperature: DataTypes.DECIMAL(3, 1),
+      humidity: DataTypes.INTEGER,
+      light: DataTypes.INTEGER,
+      // wind: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "Datasensor",
+    }
+  );
   return Datasensor;
 };

@@ -12,10 +12,12 @@ const client = mqtt.connect(connectUrl, {
 });
 
 const topics = [
+  "devices/status/response",
   "devices/air-conditioner/confirmation",
   "devices/fan/confirmation",
   "devices/light/confirmation",
-  "devices/status/response",
+  "devices/wind/confirmation",
+  "devices/wind/warning",
 ];
 
 topics.forEach((topic) => {
